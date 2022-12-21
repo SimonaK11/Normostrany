@@ -1,0 +1,1 @@
+web: waitress-serve --threads=4 --port=$PORT bp.wsgi:application
