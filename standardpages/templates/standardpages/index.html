@@ -1,0 +1,217 @@
+<!--
+This file is and index file. It is the document that will be displayed by web browser after rendering.
+
+Author: Simona Dlouha, xdlouh06@vutbr.cz
+-->
+{% extends 'standardpages/layout.html' %}
+
+{% block content %}
+
+{% if filename %}
+    <h2>Soubor: <b>{{ filename }}</b></h2>
+{% endif %}
+
+{% if number_of_characters %}
+    <div class="toggle">
+        <div class="header section">
+            <div class="pull-left">Text</div>
+            <div class="pull-right"><span class="glyphicon glyphicon-chevron-up closed"></span></div>
+        </div>
+        <div class="content">
+            <h2><b>Znaky</b></h2>
+            <p>Počet znaků: <b>{{ number_of_characters }}</b></p>
+            {% if number_of_characters_wo_spaces %}
+                <p>Počet znaků bez mezer: <b>{{ number_of_characters_wo_spaces }}</b></p>
+            {% endif %}
+
+            {% if number_of_words %}
+                <h2><b>Slova</b></h2>
+                <p>Počet slov: <b>{{ number_of_words }}</b></p>
+            {% endif %}
+            {% if most_frequent_words %}
+            <p>Nejčastěji používaná slova:</p>
+                <img class="full-width" src="data:image/png;base64, {{ most_frequent_words }}" alt="Nejčastěji používaná slova" />
+            {% endif %}
+
+            {% if number_of_sentences %}
+                <h2><b>Věty</b></h2>
+                <p>Počet vět: <b>{{ number_of_sentences }}</b></p>
+            {% endif %}
+
+            {% if number_of_pages %}
+                 <h2><b>Strany</b></h2>
+                <p>Počet stran dokumentu: <b>{{ number_of_pages }}</b></p>
+            {% endif %}
+            {% if number_of_standart_pages %}
+                <p>Počet normostran z textu: <b>{{ number_of_standart_pages }}</b></p>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+{% if number_of_images %}
+    <div class="toggle">
+        <div class="header section">
+            <div class="pull-left">Obrázky</div>
+            <div class="pull-right"><span class="glyphicon glyphicon-chevron-up closed"></span></div>
+        </div>
+        <div class="content">
+            <p>Počet obrázků: <b>{{ number_of_images }}</b></p>
+            {% if image_pixels %}
+                <p>Počet cm<sup>2</sup> na A4: <b>{{ image_pixels }}</b></p>
+            {% endif %}
+            {% if average_image_size %}
+                <p>Průměrná velikost obrázku (v cm) na A4: <b>{{ average_image_size }}×{{ average_image_size }}</b></p>
+            {% endif %}
+            {% if image_characters %}
+                <p>Počet "znaků" obrázků: <b>{{ image_characters }}</b></p>
+            {% endif %}
+            {% if number_of_standard_pages_image %}
+                <p>Počet normostran z obrázků: <b>{{ number_of_standard_pages_image }}</b></p>
+            {% endif %}
+            <table>
+                <thead>
+                     <tr>
+                        <th>Obsah [cm<sup>2</sup>]</th>
+                        <th>Výška [cm]</th>
+                        <th>Šířka [cm]</th>
+                        <th>Stránka</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for img in sorted_images %}
+                    <tr>
+                        <td>{{img.content}}</td>
+                        <td>{{img.height}}</td>
+                        <td>{{img.width}}</td>
+                        <td>{{img.page}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+
+
+{% if chapters %}
+    <div class="toggle">
+        <div class="header section">
+            <div class="pull-left">Kapitoly</div>
+            <div class="pull-right"><span class="glyphicon glyphicon-chevron-up closed"></span></div>
+        </div>
+        <div class=" content">
+            <div class="flex">
+                {% for chapter in chapters %}
+                <div class="chapter">
+                    {% if chapter.endPage and chapter.endPage != chapter.contentItem.startPage %}
+                    <h2> {{chapter.contentItem.itemNumber}}. <b>{{chapter.contentItem.title}}</b>
+                        <small>{{chapter.contentItem.startPage}} - {{chapter.endPage}}
+                            {% if chapter.numberOfPages > 4%}
+                                ({{chapter.numberOfPages}} stran)
+                            {% else %}
+                                ({{chapter.numberOfPages}} strany)
+                            {% endif %}
+                        </small>
+                    </h2>
+                    {% else %}
+                    <h2> {{chapter.contentItem.itemNumber}}. <b>{{chapter.contentItem.title}}</b>
+                        <small>{{chapter.contentItem.startPage}} </small></h2>
+                    {% endif %}
+                    <p class="chapter-section-title"><b>Text</b></p>
+                    <div class="chapter-section-div">
+                        <p>Počet znaků: {{chapter.numberOfCharacters}}</p>
+                        <p>Počet normostran: {{chapter.numberOfStandardPages}}</p>
+                    </div>
+                    {% if chapter.numberOfImages != 0 %}
+                        <p class="chapter-section-title"><b>Obrázky</b></p>
+                        <div class="chapter-section-div">
+                            <p>Počet obrázků: {{chapter.numberOfImages}}</p>
+                            <p>Počet cm<sup>2</sup>: {{chapter.imageVolume}}</p>
+                            <p>Počet normostran z obrázků: {{chapter.numberOfImageStandardPages}}</p>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="full-width center-text"><h2>Počet normostran z kapitol: <b>{{ chapters_standard_pages}}</b></h2></div>
+            </div>
+
+        </div>
+    </div>
+{% endif %}
+
+{% if image_percentage %}
+<div class="percentages">
+      <div><b>Obrázky {{image_percentage}}%</b></div>
+      <div class="percentages-bar">
+          <div style="width:{{image_percentage}}%;"></div>
+          <div style="width:{{text_percentage}}%;"></div>
+      </div>
+      <div><b>{{text_percentage}}% Text</b></div>
+</div>
+{% endif %}
+
+<br>
+{% if total_number_of_sp %}
+
+    <h4 class="center-text total">
+        Celkový počet normostran: <b>{{ total_number_of_sp }}</b></h4>
+{% else %}
+    <div id="introduction">
+       <h3><b>Vítejte!</b></h3>
+        <p>Tento webový nástroj je určen pro kontrolu délky textu bakalářské, seminární, diplomové nebo jiné práce v <b>normostranách</b>.
+        Umí ale více, než jenom spočítat znaky, poskytne Vám i <b>podrobnější analýzu textu</b>, údaje o obrázcích a kapitolách.
+        Celkový počet normostran se skládá z počtu normostran ze všech znaků dokumentu a  z normostran obrázků.
+            Kapitoly budou analyzovány, pokud je v dokumentu obsah a kapitoly jsou číslované.
+            Číslo stránky 0 u obrázku značí, že se nachází před Obsahem.
+            Pokud naleznete <b>chybu</b>, prosím zašlete mail na simcadlouha@gmail.com.
+        </p>
+        <div  class="flex">
+            <div class="box">
+                <h2><b>Text</b></h2>
+                <p>Počet znaků, Počet znaků bez mezer<br>
+                Počet slov, Nejčastěji používaná slova<br>
+                Počet stran dokumentu<br>
+                Počet normostran z textu</p>
+            </div>
+            <div class="box">
+                <h2><b>Obrázky</b></h2>
+                <p>Počet obrázků<br>
+                Počet cm<sup>2</sup> na A4<br>
+                Průměrná velikost obrázku na A4<br>
+                Počet normostran z obrázků<br>
+                Tabulka obrázků</p>
+            </div>
+            <div class="box">
+                <h2><b>Kapitoly</b></h2>
+                <p>
+                    Přehled kapitol první úrovně<br>
+                    Textové údaje kapitoly<br>
+                    Obrázkové údaje kapitoly<br>
+                    Počet normostran z kapitol
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+{% endif %}
+
+{% if wrong_file %}
+    <div class="alert alert-danger" role="alert">
+      <p class="center-text"><b>{{ wrong_file }}</b></p>
+    </div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="center-text" id="formx">
+    {% csrf_token %}
+    <div>
+        <div class="newBtn" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="removeStyle(event)">
+        <span class="glyphicon glyphicon-file"></span><b> Vyberte nebo přetáhněte soubor</b></div>
+        <input class="display-none" id="html_btn" type="file" name="myfile" accept="application/pdf" title=" ">
+        <button class="display-none" type="submit" id="submitBtn"></button>
+    </div>
+</form>
+
+{% endblock %}
