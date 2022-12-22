@@ -31,4 +31,4 @@ The server settings is located in the *Procfile*. Version of Python runtime vers
 
 ## Author
 
-* **Simona Dlouhá** - (xdlouh06@vutbr.cz)
+* **Simona Kuželová (Dlouhá)** - (xdlouh06@vutbr.cz)
